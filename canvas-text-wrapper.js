@@ -67,6 +67,8 @@
     var EL_HEIGHT = (!opts.fitParent ? canvas.height : canvas.parentNode.clientHeight) / scale;
     var MAX_TXT_WIDTH = EL_WIDTH - (opts.paddingX * 2);
     var MAX_TXT_HEIGHT = EL_HEIGHT - (opts.paddingY * 2);
+    
+  
 
     var fontSize = opts.font.match(/\d+(px|em|%)/g) ? +opts.font.match(/\d+(px|em|%)/g)[0].match(/\d+/g) : 18;
     var textBlockHeight = 0;
@@ -146,23 +148,42 @@
     function wrap() {
       if (opts.allowNewLine) {
         var newLines = text.trim().split('\n');
+       
         for (var i = 0, idx = 0; i < newLines.length - 1; i++) {
           idx += newLines[i].trim().split(/\s+/).length;
           newLineIndexes.push(idx)
         }
       }
+  
 
+ 
       var words = text.trim().split(/\s+/);
-      checkLength(words);
-      breakText(words);
+    //console.log(newLines); 
+      
 
+      checkLength(words);
+      
+      breakText(words);
+ 
+ lines=words;
+//console.log(lines);
       textBlockHeight = lines.length * lineHeight;
+      
+      canvas.height = textBlockHeight ;
+//    EL_HEIGHT=textBlockHeight ;
+          context.font = opts.font;
+          
+
     }
 
     function checkLength(words) {
       var testString, tokenLen, sliced, leftover;
 
-      words.forEach(function (word, index) {
+     // words.forEach(function (word, index) {
+				var index=0;
+				while(index<words.length){
+				var word=words[index];	
+				    
         testString = '';
         tokenLen = context.measureText(word).width;
 
@@ -174,8 +195,12 @@
           sliced = word.slice(0, k);
           leftover = word.slice(k);
           words.splice(index, 1, sliced, leftover);
+         
+        //  console.log(index, sliced, leftover);
         }
-      });
+         index++;
+      }
+     // });
     }
 
     function breakText(words) {
@@ -266,7 +291,9 @@
 
     function drawText() {
       var skipLineOnMatch = multiNewLineDelimiter + ' ';
+      
       for (var i = 0; i < lines.length; i++) {
+      	
         textPos.y = parseInt(textPos.y) + lineHeight;
         if (lines[i] !== skipLineOnMatch) {
           context.fillText(lines[i], textPos.x, textPos.y);
